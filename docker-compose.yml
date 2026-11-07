@@ -1,0 +1,62 @@
+services:
+  web:
+    build: .
+    image: mohammad1maaz/shortly:1.0
+    ports:
+      - "5000:5000"
+    environment:
+      REDIS_HOST: redis
+      DB_HOST: db
+      DB_NAME: shortener
+      DB_USER: postgres
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      BASE_URL: ${BASE_URL:-http://localhost:5000}
+      CACHE_TTL: "300"
+      RATE_LIMIT: "30"
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    networks:
+      - backend
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+    networks:
+      - backend
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: shortener
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d shortener"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+    networks:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  redis-data:
+  pg-data:
+
+networks:
+  backend:
+    driver: bridge
