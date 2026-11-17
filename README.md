@@ -9,7 +9,29 @@
 
 A production-shaped, three-tier URL shortener. **Flask** serves the API and a live dashboard, **Redis** handles caching, rate limiting and a real-time leaderboard, and **PostgreSQL** is the durable source of truth. The whole stack starts with one command.
 
-![Shortly dashboard](docs/dashboard.png)
+## Screenshots
+
+### Dashboard
+
+![Dashboard](docs/dashboard.png)
+
+### All services healthy
+
+![docker compose ps](docs/docker-health-&-ps.png)
+
+### Cache hits are observable
+
+![cache HIT vs MISS](docs/proof-of-redis.png)
+
+### Rate limiting works
+
+![rate limit](docs/proof-of-ttl.png)
+
+### Data survives `docker compose down` / `up`
+
+![persistence](docs/remove-volume.png)
+
+![dashboard] (docs/all-data-gone.png)
 
 > **Summary for reviewers:** multi-stage build, non-root container, healthchecks on every service, health-gated startup, persistent volumes, secrets kept out of Git, and a Redis layer that is deliberately designed so that losing the cache never loses data.
 
