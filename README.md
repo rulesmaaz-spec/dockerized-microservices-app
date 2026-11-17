@@ -132,8 +132,8 @@ Redirects are the hot path. The mapping is read from Redis first and repopulated
 **Rate limiting lives in Redis, not in process memory.**
 A per-IP counter in Redis stays correct when `web` is scaled to several replicas. An in-process counter would multiply the real limit by the replica count. The limiter **fails open**, so a Redis outage never becomes an API outage.
 
-**Resilient connections.**
-Redis and PostgreSQL connections retry at startup, and the database connection re-establishes itself if it drops. `/health` reports the state of each dependency separately.
+**Startup resilience.**
+Redis and PostgreSQL connections retry at startup, and `/health` reports each dependency separately. Recovery from database errors while running is limited (see below).
 
 **Defensive input handling.**
 Only `http` and `https` URLs are accepted, with a length cap. Short codes come from `secrets` (cryptographically secure), avoid reserved route names, and collisions are retried against a `UNIQUE` constraint. All SQL is parameterized.
@@ -240,8 +240,7 @@ I would rather list these than hide them:
 
 **Maaz**
 GitHub: [@rulesmaaz-spec](https://github.com/rulesmaaz-spec) · Docker Hub: [mohammad1maaz](https://hub.docker.com/repositories/mohammad1maaz)
-LinkedIn: _add your link_ · Email: _add your email_
-
+LinkedIn: www.linkedin.com/in/mohammad-maaz-805880402 · Email: mohammadmaaz90779@gmail.com
 Built as part of my DevOps journey.
 
 ## License
